@@ -8,34 +8,41 @@ The API allows users to create, update, delete, and manage tasks.
 
 ## Features
 
-- Create task
-- Get all tasks
-- Get task by ID
-- Update task
-- Toggle completion
-- Delete task
+- Create tasks
+- Retrieve all tasks
+- Retrieve a single task
+- Update tasks
+- Toggle completion status
+- Delete tasks
+- Filtering and pagination
+- Health check endpoint
 
-## Tech Stack
+## Technologies Used
 
-Python
-FastAPI
-Pydantic
+- Python
+- FastAPI
+- Pydantic
+- Uvicorn
 
-## Run Locally
+## Run the API
+
+Install dependencies
 
 pip install -r requirements.txt
 
+Start server
+
 uvicorn main:app --reload
 
-## API Documentation
+Open API documentation
 
-http://localhost:8000/docs
+http://127.0.0.1:8000/docs
 
-## Example Request
+## Key Learnings
 
-POST /tasks
-
-{
-"title": "Learn FastAPI",
-"description": "Build a REST API"
-}
+- FastAPI routing
+- Pydantic validation
+- REST API design
+- UUID generation
+- Async endpoints
+- In-memory data storage
