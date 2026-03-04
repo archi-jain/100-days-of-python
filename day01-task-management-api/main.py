@@ -4,14 +4,15 @@ from typing import Optional, Dict, List
 from datetime import datetime
 import uuid
 
-# Initialize FastAPI app
 app = FastAPI(
     title="Task Management API",
-    description="A simple REST API for managing tasks",
+    description="A REST API for managing tasks using FastAPI",
     version="1.0.0"
 )
 
-# In-memory storage
+# -----------------------------
+# In-Memory Database
+# -----------------------------
 tasks_db: Dict[str, dict] = {}
 
 
@@ -20,8 +21,8 @@ tasks_db: Dict[str, dict] = {}
 # -----------------------------
 
 class TaskCreate(BaseModel):
-    title: str = Field(..., max_length=100, description="Task title")
-    description: Optional[str] = Field(None, max_length=500, description="Task description")
+    title: str = Field(..., max_length=100)
+    description: Optional[str] = Field(None, max_length=500)
 
 
 class TaskUpdate(BaseModel):
@@ -55,6 +56,31 @@ def get_task_or_404(task_id: str):
 
 
 # -----------------------------
+# Root Endpoint
+# -----------------------------
+
+@app.get("/")
+async def root():
+    return {
+        "message": "Task Management API",
+        "version": "1.0.0",
+        "docs": "/docs"
+    }
+
+
+# -----------------------------
+# Health Check Endpoint
+# -----------------------------
+
+@app.get("/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "tasks_count": len(tasks_db)
+    }
+
+
+# -----------------------------
 # Create Task
 # -----------------------------
 
@@ -79,12 +105,22 @@ async def create_task(task: TaskCreate):
 
 
 # -----------------------------
-# Get All Tasks
+# Get All Tasks (Filtering + Pagination)
 # -----------------------------
 
 @app.get("/tasks", response_model=List[TaskResponse])
-async def get_all_tasks():
-    return list(tasks_db.values())
+async def get_all_tasks(
+    completed: Optional[bool] = None,
+    skip: int = 0,
+    limit: int = 100
+):
+
+    tasks = list(tasks_db.values())
+
+    if completed is not None:
+        tasks = [t for t in tasks if t["completed"] == completed]
+
+    return tasks[skip: skip + limit]
 
 
 # -----------------------------
@@ -120,7 +156,7 @@ async def update_task(task_id: str, task_update: TaskUpdate):
 
 
 # -----------------------------
-# Toggle Task Completion
+# Toggle Completion
 # -----------------------------
 
 @app.patch("/tasks/{task_id}/complete", response_model=TaskResponse)
@@ -139,11 +175,11 @@ async def toggle_task_completion(task_id: str):
 # Delete Task
 # -----------------------------
 
-@app.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/tasks/{task_id}")
 async def delete_task(task_id: str):
 
-    task = get_task_or_404(task_id)
+    get_task_or_404(task_id)
 
     del tasks_db[task_id]
 
-    return None
+    return {"message": "Task deleted successfully"}
