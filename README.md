@@ -471,7 +471,7 @@ Your support genuinely makes a difference! 🙏
 
 ### 🎯 Transforming YouTube hours into career skills
 
-**Made with ❤️ and lots of ☕ by [Your Name]**
+**Made with ❤️ and lots of ☕ by ME**
 
 *One commit at a time. One day at a time. One skill at a time.*
 
